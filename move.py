@@ -18,6 +18,3 @@ def move(src_file, dest_folder):
     except Exception as e:
         print("Error moving {}: {}".format(src_file, str(e)))
         return False
-
-
-move("c:/Users/Anon/Downloads/Test/Testme.txt", "Documents")
