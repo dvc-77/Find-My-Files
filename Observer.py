@@ -55,6 +55,26 @@ def compareExtension(file_extension: str):
         if file_extension in value:
             return key
 
+    return "Unknown"
+
+
+def OrganizeExisting():
+    files = [
+        os.path.join(folder_to_watch, x)
+        for x in os.listdir(folder_to_watch)
+        if os.path.isfile(os.path.join(folder_to_watch, x))
+    ]
+
+    for idx, file in enumerate(files):
+        f_extension = os.path.splitext(file)[1]
+
+        # Getting folder to transfer to
+        to_folder = compareExtension(f_extension)
+
+        move(file, to_folder, folder_to_watch)
+
+        print(f"{idx}:  {file} moved to -> {to_folder}")
+
 
 class MyHandler(FileSystemEventHandler):
     def on_created(self, event):
@@ -76,7 +96,9 @@ class MyHandler(FileSystemEventHandler):
 
 if __name__ == "__main__":
     # Specify the folder you want to monitor here.
-    folder_to_watch = "c:/Users/Anon/Downloads/Test"
+    folder_to_watch = "c:/Users/Anon/Downloads"
+
+    OrganizeExisting()
 
     event_handler = MyHandler()
     observer = Observer()
