@@ -5,45 +5,8 @@ from watchdog.events import FileSystemEventHandler
 from functools import lru_cache
 from Move import move
 
-
-def add_to_startup() -> None:
-    script_path = os.path.abspath(__file__)
-
-    key = winreg.OpenKey(
-        winreg.HKEY_CURRENT_USER,
-        r"Software\Microsoft\Windows\CurrentVersion\Run",
-        0,
-        winreg.KEY_READ,
-    )
-
-    try:
-        existing_value, _ = winreg.QueryValueEx(key, "Observe")
-        if existing_value == script_path:
-            print("Script is already in the startup applications.")
-            return
-    except WindowsError:
-        pass
-
-    n_key = winreg.OpenKey(
-        winreg.HKEY_CURRENT_USER,
-        r"Software\Microsoft\Windows\CurrentVersion\Run",
-        0,
-        winreg.KEY_SET_VALUE,
-    )
-
-    winreg.SetValueEx(n_key, "Observe", 0, winreg.REG_SZ, script_path)
-
-    winreg.CloseKey(key)
-
-    print("[+] Operation complete [+]")
-
-
-def MakeStartApp() -> None:
-    sys_platform = platform.system()
-
-    if sys_platform == "Windows":
-        add_to_startup()
-
+# Specify the folder you want to monitor here.
+folder_to_watch = "c:/Users/Anon/Downloads"
 
 # Dictionary for extensions
 All_file_extensions = {
@@ -86,6 +49,45 @@ All_file_extensions = {
         ".tar.xz",
     ],
 }
+
+
+def add_to_startup() -> None:
+    script_path = os.path.abspath(__file__)
+
+    key = winreg.OpenKey(
+        winreg.HKEY_CURRENT_USER,
+        r"Software\Microsoft\Windows\CurrentVersion\Run",
+        0,
+        winreg.KEY_READ,
+    )
+
+    try:
+        existing_value, _ = winreg.QueryValueEx(key, "Observe")
+        if existing_value == script_path:
+            print("Script is already in the startup applications.")
+            return
+    except WindowsError:
+        pass
+
+    n_key = winreg.OpenKey(
+        winreg.HKEY_CURRENT_USER,
+        r"Software\Microsoft\Windows\CurrentVersion\Run",
+        0,
+        winreg.KEY_SET_VALUE,
+    )
+
+    winreg.SetValueEx(n_key, "Observe", 0, winreg.REG_SZ, script_path)
+
+    winreg.CloseKey(key)
+
+    print("[+] Operation complete [+]")
+
+
+def MakeStartApp() -> None:
+    sys_platform = platform.system()
+
+    if sys_platform == "Windows":
+        add_to_startup()
 
 
 @lru_cache(maxsize=12)
@@ -133,11 +135,7 @@ class MyHandler(FileSystemEventHandler):
         print("File moved")
 
 
-if __name__ == "__main__":
-    # Specify the folder you want to monitor here.
-    folder_to_watch = "c:/Users/Anon/Downloads"
-
-    # Add file to registry
+def run():
     MakeStartApp()
 
     # Organizing folder
